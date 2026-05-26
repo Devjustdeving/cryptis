@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, BarChart3, Newspaper, Search, Share2, Map as MapIcon, X, Globe, MapPinned, Radar, Satellite, Moon, ExternalLink, AlertTriangle, Building2, RadioTower, Activity, Shield, Database, Wifi } from 'lucide-react';
+import { Layers, BarChart3, Newspaper, Search, Share2, Map as MapIcon, X, Globe, MapPinned, Radar, Satellite, Moon, ExternalLink, AlertTriangle, Building2, RadioTower, Activity, Shield, Database, Wifi, PanelLeftClose, PanelLeftOpen, ChevronUp, ChevronDown, Eye, EyeOff, Bookmark, Terminal } from 'lucide-react';
 import IntelFeed from '@/components/IntelFeed';
 import MarketsPanel from '@/components/MarketsPanel';
 import SearchBar from '@/components/SearchBar';
@@ -116,9 +116,31 @@ export default function Dashboard() {
   const [mapStyle, setMapStyle] = useState<'dark'|'satellite'>('dark');
   const [sweepData, setSweepData] = useState<any>(null);
   const [scanTargets, setScanTargets] = useState<any[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [reconOpen, setReconOpen] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
+  const [bookmarks, setBookmarks] = useState<Array<{name: string; lat: number; lng: number; zoom: number}>>(() => {
+    if (typeof window !== 'undefined') {
+      try { return JSON.parse(localStorage.getItem('cryptis-bookmarks') || '[]'); } catch { return []; }
+    }
+    return [];
+  });
 
   const isMobile = useIsMobile();
   const startTime = useRef(Date.now());
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cryptis-bookmarks', JSON.stringify(bookmarks));
+    }
+  }, [bookmarks]);
+
+  const saveBookmark = useCallback(() => {
+    const coords = mouseCoordsRef.current;
+    if (!coords) return;
+    const name = locationLabel || `${coords.lat.toFixed(2)}, ${coords.lng.toFixed(2)}`;
+    setBookmarks(prev => [...prev, { name, lat: coords.lat, lng: coords.lng, zoom: mapView.zoom }]);
+  }, [locationLabel, mapView.zoom]);
   const geocodeCache = useRef<Map<string, string>>(new Map());
   const geocodeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastGeocodedPos = useRef<{ lat: number; lng: number } | null>(null);
@@ -218,6 +240,9 @@ export default function Dashboard() {
       if (e.key === 'i') setShowIntel(p => !p);
       if (e.key === 'r') setFlyToLocation({ lat: 20, lng: 0, ts: Date.now() });
       if (e.key === 'g') setMapProjection(p => p === 'globe' ? 'mercator' : 'globe');
+      if (e.key === 'h') setFocusMode(p => !p);
+      if (e.key === 'b' && !e.ctrlKey) saveBookmark();
+      if (e.key === 'Escape') { setFocusMode(false); setReconOpen(false); }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -411,7 +436,7 @@ export default function Dashboard() {
 
 
   return (
-    <main className="fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden">
+    <main className={`fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden ${focusMode ? 'focus-mode' : ''}`}>
 
       {/* ── SPLASH — Circuit Board Animation ── */}
       <AnimatePresence>
@@ -587,10 +612,17 @@ export default function Dashboard() {
       </ErrorBoundary>
 
 
+      {/* ── FOCUS MODE EXIT ── */}
+      {focusMode && (
+        <button onClick={() => setFocusMode(false)} className="focus-exit-btn">
+          Press H or click to exit focus mode
+        </button>
+      )}
+
       {/* ── MAP VIEW CONTROLS (3D/2D + SATELLITE TOGGLE) ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 3.5 }}
-        className="absolute bottom-[75px] md:bottom-6 left-3 md:left-[315px] z-[200] flex items-center gap-2 pointer-events-none"
+        className={`absolute bottom-[75px] md:bottom-6 left-3 ${sidebarOpen && !isMobile ? 'md:left-[305px]' : 'md:left-4'} z-[200] flex items-center gap-2 pointer-events-none transition-all duration-300`}
       >
         {/* 3D/2D Toggle */}
         <button
@@ -625,89 +657,154 @@ export default function Dashboard() {
         </button>
       </motion.div>
 
-      {/* ── HEADER ── */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.5 }} className={`absolute top-3 left-3 md:top-5 md:left-5 z-[200] pointer-events-none flex items-center gap-2 md:gap-3`}>
-        <div className="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center relative">
-          <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-full h-full drop-shadow-[0_0_8px_rgba(68,138,255,0.3)]" />
-        </div>
-        {/* Horizontal rule extending from logo */}
-        <div className="hidden md:block absolute top-1/2 left-[52px] w-[200px] h-[1px] bg-gradient-to-r from-[var(--gold-primary)]/40 via-[var(--gold-primary)]/15 to-transparent" />
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <h1 className="text-base md:text-xl font-bold tracking-[0.4em] md:tracking-[0.5em] text-[var(--text-heading)] font-mono">CRYPTIS</h1>
-            <span className="hidden md:inline-flex items-center gap-1 px-1.5 py-[1px] rounded-sm border border-[var(--cyan-primary)]/40 bg-[var(--cyan-primary)]/10 text-[7px] font-mono font-bold tracking-[0.15em] text-[var(--cyan-primary)] uppercase" style={{ lineHeight: '1.4' }}>
+      {/* ── COMMAND BAR (top) ── */}
+      {!isMobile && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 2.5 }}
+          className="command-bar absolute top-0 left-0 right-0 h-12 flex items-center px-4 gap-4"
+        >
+          {/* Left: Logo + sidebar toggle */}
+          <div className="flex items-center gap-3 min-w-[200px]">
+            <button onClick={() => setSidebarOpen(p => !p)} className="p-1.5 rounded hover:bg-[var(--hover-accent)] transition-colors" title="Toggle sidebar [L]">
+              {sidebarOpen ? <PanelLeftClose className="w-4 h-4 text-[var(--text-muted)]" /> : <PanelLeftOpen className="w-4 h-4 text-[var(--text-muted)]" />}
+            </button>
+            <div className="flex items-center gap-2">
+              <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-7 h-7 drop-shadow-[0_0_6px_rgba(68,138,255,0.3)]" />
+              <h1 className="text-sm font-bold tracking-[0.4em] text-[var(--text-heading)] font-mono">CRYPTIS</h1>
+            </div>
+            <span className="inline-flex items-center gap-1 px-1.5 py-[1px] rounded-sm border border-[var(--cyan-primary)]/40 bg-[var(--cyan-primary)]/10 text-[7px] font-mono font-bold tracking-[0.15em] text-[var(--cyan-primary)] uppercase">
               <Globe className="w-2.5 h-2.5" />
               OPEN SOURCE
             </span>
           </div>
-          <span className="text-[8px] md:text-[9px] text-[var(--gold-primary)] font-mono tracking-[0.2em] md:tracking-[0.3em] opacity-80">GLOBAL INTELLIGENCE COMMAND</span>
-        </div>
-      </motion.div>
 
-      {/* ── TOP-RIGHT STATUS (desktop) — C2 DISPLAY ── */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3 }} className="status-bar-desktop absolute top-3 right-3 md:top-4 md:right-5 z-[200] pointer-events-none flex items-center gap-1.5 md:gap-3 text-[9px] md:text-[10px] font-mono tracking-widest text-[var(--text-muted)]">
+          {/* Center: Search */}
+          <div className="flex-1 max-w-md mx-auto">
+            <SearchBar onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} />
+          </div>
 
-        {/* Zulu Clock */}
-        <span className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border border-[var(--border-primary)] bg-black/30">
-          <ZuluClock />
-        </span>
+          {/* Right: Status + controls */}
+          <div className="flex items-center gap-3 min-w-[200px] justify-end text-[10px] font-mono tracking-wider text-[var(--text-muted)]">
+            <ZuluClock />
+            <span className="text-[var(--border-primary)]">|</span>
+            <span className="flex items-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${backendStatus === 'connected' ? 'bg-[var(--alert-green)]' : 'bg-[var(--alert-red)]'}`} />
+              {backendStatus === 'connected' ? 'ONLINE' : 'ERROR'}
+            </span>
+            {spaceWeather && (
+              <>
+                <span className="text-[var(--border-primary)]">|</span>
+                <span>Kp<span style={{ color: spaceWeather.storm_color, fontWeight: 700 }}>{spaceWeather.kp_index}</span></span>
+              </>
+            )}
+            <span className="text-[var(--border-primary)]">|</span>
+            <button onClick={() => setReconOpen(p => !p)} className={`flex items-center gap-1 px-2 py-1 rounded transition-colors ${reconOpen ? 'bg-[var(--cyan-primary)]/15 text-[var(--cyan-primary)]' : 'hover:text-[var(--cyan-primary)]'}`} title="RECON Panel">
+              <Terminal className="w-3.5 h-3.5" />
+              <span className="text-[9px] font-bold tracking-widest">RECON</span>
+            </button>
+            <button onClick={() => setFocusMode(p => !p)} className="p-1.5 rounded hover:bg-[var(--hover-accent)] transition-colors" title="Focus mode [H]">
+              {focusMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
+            <SharePanel mapView={mapView} activeLayers={activeLayers} mouseCoords={null} />
+          </div>
+        </motion.div>
+      )}
 
-        <span className="hidden lg:inline text-[var(--border-primary)]">│</span>
-
-        <span className="flex items-center gap-1">SYS: <span className={backendStatus === 'connected' ? 'text-[var(--alert-green)]' : 'text-[var(--alert-red)]'}>{backendStatus.toUpperCase()}</span></span>
-
-        {spaceWeather && <span className="hidden lg:inline">SOLAR: <span style={{ color: spaceWeather.storm_color, fontWeight: 700 }}>Kp{spaceWeather.kp_index}</span></span>}
-
-        {/* Active Data Feeds */}
-        <span className="hidden lg:inline-flex items-center gap-1">
-          <Wifi className="w-3 h-3 text-[var(--cyan-primary)]" />
-          <span className="text-[var(--cyan-primary)] font-bold">{Object.values(activeLayers).filter(Boolean).length}</span>
-          <span className="text-[var(--text-muted)]/60">FEEDS</span>
-        </span>
-
-        <UptimeClock />
-        
-      </motion.div>
 
 
 
+      {/* ── COLLAPSIBLE SIDEBAR (desktop) ── */}
+      {!isMobile && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 2.8 }}
+          className={`sidebar absolute left-0 top-12 ${reconOpen ? 'bottom-[320px]' : 'bottom-0'} w-[290px] flex flex-col gap-2.5 p-3 pointer-events-auto styled-scrollbar transition-all duration-300 ${sidebarOpen ? '' : 'collapsed'}`}
+        >
+          {/* Stats bar */}
+          <div className="glass-panel glass-panel--flat px-3 py-2">
+            <div className="grid grid-cols-5 gap-2 text-center">
+              <div><div className="hud-label">Aircraft</div><div className="hud-value text-[10px] animate-data-pulse">{globalStats ? globalStats.flights.toLocaleString() : '0'}</div></div>
+              <div><div className="hud-label">Sats</div><div className="hud-value text-[10px]">{globalStats ? globalStats.sats.toLocaleString() : '0'}</div></div>
+              <div><div className="hud-label">CCTV</div><div className="hud-value text-[10px]">{globalStats ? globalStats.cctv.toLocaleString() : '0'}</div></div>
+              <div><div className="hud-label">Weather</div><div className="hud-value text-[10px]" style={{ color: '#E040FB' }}>{globalStats ? globalStats.weather.toLocaleString() : '0'}</div></div>
+              <div><div className="hud-label">Nuclear</div><div className="hud-value text-[10px]" style={{ color: '#76FF03' }}>{globalStats ? globalStats.nuclear.toLocaleString() : '0'}</div></div>
+            </div>
+          </div>
 
-      {/* ── LEFT HUD (desktop): Layers + Stats + Markets + Intel ── */}
-      <div className="desktop-panel absolute left-5 top-20 bottom-24 w-72 flex flex-col gap-3 z-[200] pointer-events-none overflow-y-auto styled-scrollbar pr-1">
-        {showLayers && (
-          <>
-            <LayerPanel data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} />
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="glass-panel px-3 py-2.5 pointer-events-auto">
-              <div className="grid grid-cols-5 gap-2 text-center">
-                <div><div className="hud-label">AIRCRAFT</div><div className="hud-value text-[10px] animate-data-pulse">{globalStats ? globalStats.flights.toLocaleString() : '0'}</div></div>
-                <div><div className="hud-label">SATS</div><div className="hud-value text-[10px]">{globalStats ? globalStats.sats.toLocaleString() : '0'}</div></div>
-                <div><div className="hud-label">CCTV</div><div className="hud-value text-[10px]">{globalStats ? globalStats.cctv.toLocaleString() : '0'}</div></div>
-                <div><div className="hud-label">WEATHER</div><div className="hud-value text-[10px]" style={{ color: '#E040FB' }}>{globalStats ? globalStats.weather.toLocaleString() : '0'}</div></div>
-                <div><div className="hud-label">NUCLEAR</div><div className="hud-value text-[10px]" style={{ color: '#76FF03' }}>{globalStats ? globalStats.nuclear.toLocaleString() : '0'}</div></div>
+          {showLayers && (
+            <>
+              <LayerPanel data={data} activeLayers={activeLayers} setActiveLayers={setActiveLayers} />
+              <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, ts: Date.now() }); setMapView(v => ({ ...v, zoom })); }} />
+            </>
+          )}
+
+          {/* Bookmarks */}
+          {bookmarks.length > 0 && (
+            <div className="glass-panel glass-panel--green px-3 py-2">
+              <div className="flex items-center justify-between mb-2">
+                <div className="hud-label flex items-center gap-1"><Bookmark className="w-3 h-3" /> Saved Locations</div>
+              </div>
+              <div className="space-y-1">
+                {bookmarks.map((bm, i) => (
+                  <div key={i} className="flex items-center justify-between group">
+                    <button
+                      onClick={() => { setFlyToLocation({ lat: bm.lat, lng: bm.lng, ts: Date.now() }); setMapView(v => ({ ...v, zoom: bm.zoom })); }}
+                      className="text-[10px] font-mono text-[var(--text-secondary)] hover:text-[var(--gold-primary)] truncate flex-1 text-left transition-colors"
+                    >
+                      {bm.name}
+                    </button>
+                    <button onClick={() => setBookmarks(prev => prev.filter((_, j) => j !== i))} className="text-[var(--text-muted)] hover:text-[var(--alert-red)] opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {showMarkets && <MarketsPanel data={data} spaceWeather={spaceWeather} />}
+          {showIntel && <IntelFeed data={data} onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} />}
+          <LiveAlerts data={data} onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} onWatchFeed={(url, name) => { setLiveFeedUrl(url); setLiveFeedName(name); }} />
+        </motion.div>
+      )}
+
+      {/* ── RECON BOTTOM DRAWER (desktop) ── */}
+      {!isMobile && (
+        <AnimatePresence>
+          {reconOpen && (
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="recon-drawer absolute bottom-0 left-0 right-0 h-[320px] overflow-y-auto styled-scrollbar"
+            >
+              <div className="recon-drawer-handle" />
+              <div className="flex items-center justify-between px-5 pb-2">
+                <div className="flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-[var(--cyan-primary)]" />
+                  <span className="text-xs font-bold tracking-[0.3em] text-[var(--cyan-primary)] font-mono">RECON TOOLKIT</span>
+                </div>
+                <button onClick={() => setReconOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] p-1 transition-colors">
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-5 pb-4">
+                <OsintPanel onSweepVisualize={setSweepData} onScanGeolocate={(target, data) => {
+                  setScanTargets(prev => {
+                    const existing = prev.filter(t => t.id !== target);
+                    return [{ id: target, timestamp: Date.now(), ...data }, ...existing].slice(0, 10);
+                  });
+                  setFlyToLocation({ lat: data.lat, lng: data.lng, ts: Date.now() });
+                }} />
               </div>
             </motion.div>
-            <ViewPresets onNavigate={(lat, lng, zoom) => { setFlyToLocation({ lat, lng, ts: Date.now() }); setMapView(v => ({ ...v, zoom })); }} />
-          </>
-        )}
-        {showMarkets && <MarketsPanel data={data} spaceWeather={spaceWeather} />}
-        {showIntel && <IntelFeed data={data} onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} />}
-      </div>
-
-      {/* ── RIGHT HUD (desktop): Search + RECON + Live Alerts ── */}
-      <div className="desktop-panel absolute right-5 top-20 bottom-24 w-80 flex flex-col gap-3 z-[200] pointer-events-auto overflow-y-auto styled-scrollbar pr-1">
-        <div className="flex gap-2 items-start">
-          <div className="flex-1"><SearchBar onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} /></div>
-          <div className="relative"><SharePanel mapView={mapView} activeLayers={activeLayers} mouseCoords={null} /></div>
-        </div>
-        <OsintPanel onSweepVisualize={setSweepData} onScanGeolocate={(target, data) => {
-          setScanTargets(prev => {
-            const existing = prev.filter(t => t.id !== target);
-            return [{ id: target, timestamp: Date.now(), ...data }, ...existing].slice(0, 10);
-          });
-          setFlyToLocation({ lat: data.lat, lng: data.lng, ts: Date.now() });
-        }} />
-        <LiveAlerts data={data} onLocate={(lat, lng) => setFlyToLocation({ lat, lng, ts: Date.now() })} onWatchFeed={(url, name) => { setLiveFeedUrl(url); setLiveFeedName(name); }} />
-      </div>
+          )}
+        </AnimatePresence>
+      )}
 
       {/* ── LIVE FEED VIEWER OVERLAY ── */}
       <AnimatePresence>
@@ -886,77 +983,33 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── BOTTOM CENTER (desktop) ── */}
+      {/* ── FLOATING STATUS PILL (desktop) ── */}
       {!isMobile && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 3, duration: 0.8 }} className="desktop-only absolute bottom-5 left-1/2 -translate-x-1/2 z-[200] pointer-events-auto">
-          <div className="glass-panel px-5 py-2.5 flex items-center gap-0 cryptis-glow relative overflow-hidden" style={{ borderImage: 'linear-gradient(90deg, rgba(68,138,255,0.05), rgba(68,138,255,0.2), rgba(68,138,255,0.05)) 1', borderImageSlice: 1, borderWidth: '1px', borderStyle: 'solid' }}>
-
-            {/* Animated scan line sweeping across the bar */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-              <div className="absolute top-0 bottom-0 w-[60px] bg-gradient-to-r from-transparent via-[var(--gold-primary)]/[0.07] to-transparent" style={{ animation: 'hud-scanline 4s ease-in-out infinite' }} />
-            </div>
-
-            {/* COORDINATES */}
-            <div className="flex flex-col items-center min-w-[110px] px-3">
-              <div className="hud-label">COORDINATES</div>
-              <div ref={coordsDisplayRef} className="text-[10px] font-mono font-bold text-[var(--gold-primary)] tracking-wide tabular-nums">—</div>
-            </div>
-
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--border-primary)] to-transparent flex-shrink-0" />
-
-            {/* LOCATION */}
-            <div className="flex flex-col items-center min-w-[160px] max-w-[280px] px-3">
-              <div className="hud-label">LOCATION</div>
-              <div className="text-[9px] text-[var(--text-secondary)] font-mono truncate max-w-[280px]">{locationLabel || 'Hover over map...'}</div>
-            </div>
-
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--border-primary)] to-transparent flex-shrink-0" />
-
-            {/* ZOOM */}
-            <div className="flex flex-col items-center px-3">
-              <div className="hud-label">ZOOM</div>
-              <div className="text-[10px] font-mono font-bold text-[var(--gold-primary)] tabular-nums">{mapView.zoom.toFixed(1)}</div>
-            </div>
-
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--border-primary)] to-transparent flex-shrink-0" />
-
-            {/* ACTIVE LAYERS */}
-            <div className="flex flex-col items-center px-3 min-w-[60px]">
-              <div className="hud-label">ACTIVE LAYERS</div>
-              <div className="flex items-center gap-1">
-                <Layers className="w-3 h-3 text-[var(--gold-primary)]" />
-                <span className="text-[10px] font-mono font-bold text-[var(--gold-primary)] tabular-nums">{Object.values(activeLayers).filter(Boolean).length}</span>
-              </div>
-            </div>
-
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--border-primary)] to-transparent flex-shrink-0" />
-
-            {/* DATA FEEDS */}
-            <div className="flex flex-col items-center px-3 min-w-[60px]">
-              <div className="hud-label">FEEDS</div>
-              <div className="flex items-center gap-1">
-                <Activity className="w-3 h-3 text-[var(--cyan-primary)]" />
-                <span className="text-[10px] font-mono font-bold text-[var(--cyan-primary)] tabular-nums">{Object.values(activeLayers).filter(Boolean).length}</span>
-              </div>
-            </div>
-
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-[var(--border-primary)] to-transparent flex-shrink-0" />
-
-            {/* THROUGHPUT */}
-            <div className="flex flex-col items-center px-3 min-w-[70px]">
-              <div className="hud-label">THROUGHPUT</div>
-              <div className="flex items-center gap-1">
-                <Database className="w-3 h-3 text-[var(--alert-green)]" />
-                <DataThroughput data={data} />
-              </div>
-            </div>
-
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3, duration: 0.6 }}
+          className={`status-pill absolute ${reconOpen ? 'bottom-[330px]' : 'bottom-5'} left-1/2 -translate-x-1/2 px-4 py-1.5 flex items-center gap-3 pointer-events-auto transition-all duration-300`}
+        >
+          <div ref={coordsDisplayRef} className="text-[10px] font-mono font-bold text-[var(--gold-primary)] tabular-nums">—</div>
+          <div className="pill-divider" />
+          <span className="text-[9px] text-[var(--text-secondary)] font-mono truncate max-w-[200px]">{locationLabel || 'Hover over map'}</span>
+          <div className="pill-divider" />
+          <span className="text-[10px] font-mono text-[var(--gold-primary)] tabular-nums">{mapView.zoom.toFixed(1)}x</span>
+          <div className="pill-divider" />
+          <span className="flex items-center gap-1">
+            <Layers className="w-3 h-3 text-[var(--gold-primary)]" />
+            <span className="text-[10px] font-mono font-bold text-[var(--gold-primary)] tabular-nums">{Object.values(activeLayers).filter(Boolean).length}</span>
+          </span>
+          <div className="pill-divider" />
+          <button onClick={saveBookmark} className="flex items-center gap-1 text-[var(--text-muted)] hover:text-[var(--cyan-primary)] transition-colors" title="Bookmark location [B]">
+            <Bookmark className="w-3 h-3" />
+          </button>
         </motion.div>
       )}
 
       {/* ── Scale Bar (desktop) ── */}
-      <div className="desktop-only absolute bottom-[4.5rem] left-[20rem] z-[201] pointer-events-none">
+      <div className={`desktop-only absolute bottom-[4.5rem] ${sidebarOpen ? 'left-[19rem]' : 'left-4'} z-[201] pointer-events-none transition-all duration-300`}>
         <ScaleBar zoom={mapView.zoom} latitude={mapView.latitude} />
       </div>
 
@@ -1020,7 +1073,7 @@ export default function Dashboard() {
 
       {/* Shortcut hint */}
       <div className="desktop-only absolute bottom-[26px] right-5 z-[200] pointer-events-none text-[6px] font-mono text-[var(--text-muted)]/40 tracking-widest">
-        [?] SHORTCUTS · [F] FULLSCREEN · [S] SHARE · [R] RESET VIEW
+        [?] SHORTCUTS · [F] FULLSCREEN · [H] FOCUS · [B] BOOKMARK · [R] RESET
       </div>
 
 
