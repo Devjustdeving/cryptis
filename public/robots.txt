@@ -1,5 +1,5 @@
 # CRYPTIS Global Intelligence Platform
-# https://cryptis.vercel.app
+# https://cryptis.live
 
 User-agent: *
 Allow: /
@@ -11,7 +11,7 @@ Disallow: /api/osint/*
 Allow: /api/health
 
 # Sitemap
-Sitemap: https://cryptis.vercel.app/sitemap.xml
+Sitemap: https://cryptis.live/sitemap.xml
 
 # Crawl-delay for respectful indexing
 Crawl-delay: 10

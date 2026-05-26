@@ -29,7 +29,7 @@ export default function SharePanel({ mapView, activeLayers, mouseCoords }: Share
       .join(',');
     if (layerKeys) params.set('layers', layerKeys);
 
-    const base = typeof window !== 'undefined' ? window.location.origin : 'https://cryptis.vercel.app';
+    const base = typeof window !== 'undefined' ? window.location.origin : 'https://cryptis.live';
     return `${base}/?${params.toString()}`;
   }, [mapView, activeLayers, mouseCoords]);
 
