@@ -413,143 +413,156 @@ export default function Dashboard() {
   return (
     <main className="fixed inset-0 w-full h-full bg-[var(--bg-void)] overflow-hidden">
 
-      {/* ── SPLASH ── */}
+      {/* ── SPLASH — Circuit Board Animation ── */}
       <AnimatePresence>
         {showSplash && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: 'easeInOut' }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
             className="absolute inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
-            style={{ background: 'radial-gradient(ellipse at center, #0a0a14 0%, var(--bg-void) 70%)' }}
+            style={{ background: '#02020a' }}
           >
-            {/* ── Scanline CRT overlay ── */}
-            <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(68,138,255,0.015) 2px, rgba(68,138,255,0.015) 4px)',
-              animation: 'splashScanDrift 8s linear infinite',
-            }} />
-
-            {/* ── V4.2 badge — top-left ── */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="absolute top-6 left-6 z-[2] font-mono text-[10px] tracking-[0.3em] text-[var(--gold-primary)]"
-            >
-              V4.2
-            </motion.div>
-
-
-
-            {/* ── CRYPTIS Logo ── */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="relative w-40 h-40 mb-8 flex items-center justify-center z-[2]"
-            >
-              <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-36 h-36 drop-shadow-[0_0_20px_rgba(68,138,255,0.3)]" />
-            </motion.div>
-
-            {/* ── CRYPTIS title — letter-by-letter stagger ── */}
-            <div className="flex items-center gap-[2px] mb-3 z-[2]">
-              {'CRYPTIS'.split('').map((letter, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.5 + i * 0.08, duration: 0.5, ease: 'easeOut' }}
-                  className="text-4xl md:text-5xl font-bold tracking-[0.5em] font-mono"
-                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(68,138,255,0.2)' }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
-            </div>
-
-            {/* ── Subtitle — typewriter reveal ── */}
-            <div className="overflow-hidden mb-8 z-[2]">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 1.2, duration: 0.8, ease: 'easeInOut' }}
-                className="overflow-hidden whitespace-nowrap"
-              >
-                <p className="text-[10px] md:text-[11px] font-mono tracking-[0.5em] text-[var(--gold-primary)]" style={{ opacity: 0.8 }}>
-                  GLOBAL INTELLIGENCE PLATFORM
-                </p>
-              </motion.div>
-            </div>
-
-            {/* ── Multi-stage progress bar ── */}
-            <div className="w-64 md:w-80 z-[2]">
-              {/* Thin progress track */}
-              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(68,138,255,0.1)' }}>
-                <motion.div
-                  initial={{ width: '0%' }}
-                  animate={{ width: ['0%', '25%', '50%', '78%', '100%'] }}
-                  transition={{ duration: 2.2, delay: 0.5, times: [0, 0.25, 0.5, 0.75, 1], ease: 'easeInOut' }}
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(68,138,255,0.4)' }}
-                />
-              </div>
-
-              {/* Status messages — cycling */}
-              <div className="mt-3 h-4 flex items-center justify-center">
-                {[
-                  { text: 'ESTABLISHING SECURE CONNECTION...', delay: 0.5 },
-                  { text: 'INITIALIZING FEEDS...', delay: 1.1 },
-                  { text: 'CALIBRATING SENSORS...', delay: 1.7 },
-                  { text: 'SYSTEM READY', delay: 2.2 },
-                ].map((stage, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 1, 0] }}
-                    transition={{ delay: stage.delay, duration: 0.6, times: [0, 0.1, 0.7, 1] }}
-                    className="absolute text-[9px] font-mono tracking-[0.25em]"
-                    style={{ color: i === 3 ? 'var(--cyan-primary)' : 'var(--text-muted)' }}
-                  >
-                    {stage.text}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-
-            {/* ── Decorative grid lines ── */}
-            <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.03 }}>
+            {/* Circuit board grid background */}
+            <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.06 }}>
               <div className="absolute inset-0" style={{
-                backgroundImage: 'linear-gradient(rgba(68,138,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(68,138,255,0.5) 1px, transparent 1px)',
-                backgroundSize: '60px 60px',
+                backgroundImage: `
+                  linear-gradient(rgba(68,138,255,0.4) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(68,138,255,0.4) 1px, transparent 1px)`,
+                backgroundSize: '40px 40px',
               }} />
             </div>
 
-            {/* ── Corner frame accents ── */}
+            {/* Animated circuit traces */}
+            <svg className="absolute inset-0 w-full h-full z-[1]" style={{ opacity: 0.12 }}>
+              <motion.line x1="0" y1="50%" x2="100%" y2="50%" stroke="#448AFF" strokeWidth="1"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, ease: 'easeInOut' }} />
+              <motion.line x1="50%" y1="0" x2="50%" y2="100%" stroke="#39FF14" strokeWidth="1"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, delay: 0.3, ease: 'easeInOut' }} />
+              <motion.line x1="20%" y1="0" x2="20%" y2="100%" stroke="#448AFF" strokeWidth="0.5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, delay: 0.5 }} />
+              <motion.line x1="80%" y1="0" x2="80%" y2="100%" stroke="#448AFF" strokeWidth="0.5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, delay: 0.6 }} />
+              <motion.line x1="0" y1="30%" x2="100%" y2="30%" stroke="#39FF14" strokeWidth="0.5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, delay: 0.7 }} />
+              <motion.line x1="0" y1="70%" x2="100%" y2="70%" stroke="#39FF14" strokeWidth="0.5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.2, delay: 0.8 }} />
+              {/* Circuit nodes at intersections */}
+              {[[20,30],[20,50],[20,70],[50,30],[50,70],[80,30],[80,50],[80,70]].map(([cx,cy], i) => (
+                <motion.circle key={i} cx={`${cx}%`} cy={`${cy}%`} r="3" fill="#448AFF"
+                  initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.6, scale: 1 }}
+                  transition={{ delay: 1 + i * 0.08, duration: 0.3 }} />
+              ))}
+            </svg>
+
+            {/* Horizontal scan line */}
+            <motion.div
+              className="absolute left-0 right-0 h-[2px] z-[2] pointer-events-none"
+              style={{ background: 'linear-gradient(90deg, transparent, #39FF14, #448AFF, transparent)', boxShadow: '0 0 20px rgba(57,255,20,0.4)' }}
+              initial={{ top: '0%' }}
+              animate={{ top: ['0%', '100%'] }}
+              transition={{ duration: 2, ease: 'linear', repeat: Infinity }}
+            />
+
+            {/* Logo with glow pulse */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.3, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+              className="relative w-32 h-32 mb-6 z-[3]"
+            >
+              <motion.div
+                animate={{ boxShadow: ['0 0 30px rgba(68,138,255,0.2)', '0 0 60px rgba(68,138,255,0.4)', '0 0 30px rgba(68,138,255,0.2)'] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-full h-full rounded-xl"
+              >
+                <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-full h-full" />
+              </motion.div>
+            </motion.div>
+
+            {/* CRYPTIS title — glitch-style reveal */}
+            <div className="relative mb-2 z-[3]">
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.5, ease: 'easeOut' }}
+                className="text-4xl md:text-6xl font-bold tracking-[0.4em] md:tracking-[0.6em]"
+                style={{ fontFamily: 'var(--font-hud)', color: '#E8F0FF', textShadow: '0 0 40px rgba(68,138,255,0.3), 0 0 80px rgba(68,138,255,0.1)' }}
+              >
+                CRYPTIS
+              </motion.h1>
+              {/* Glitch clone */}
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.3, 0, 0.2, 0], x: [0, 2, -2, 1, 0] }}
+                transition={{ delay: 0.8, duration: 0.4, ease: 'easeInOut' }}
+                className="absolute inset-0 text-4xl md:text-6xl font-bold tracking-[0.4em] md:tracking-[0.6em]"
+                style={{ fontFamily: 'var(--font-hud)', color: '#39FF14', mixBlendMode: 'screen' }}
+              >
+                CRYPTIS
+              </motion.h1>
+            </div>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 0.7, y: 0 }}
+              transition={{ delay: 1.0, duration: 0.5 }}
+              className="text-[10px] md:text-[12px] tracking-[0.4em] mb-8 z-[3]"
+              style={{ fontFamily: 'var(--font-body)', color: '#39FF14', letterSpacing: '0.4em' }}
+            >
+              GLOBAL INTELLIGENCE PLATFORM
+            </motion.p>
+
+            {/* Terminal-style boot sequence */}
+            <div className="w-72 md:w-96 z-[3]">
+              <div className="rounded-lg border border-[rgba(68,138,255,0.2)] bg-[rgba(0,0,0,0.6)] p-3 font-mono text-[10px]">
+                {[
+                  { text: '> Initializing secure channels...', delay: 0.5, color: '#448AFF' },
+                  { text: '> Loading intelligence feeds...', delay: 1.0, color: '#448AFF' },
+                  { text: '> Calibrating geo-sensors...', delay: 1.5, color: '#448AFF' },
+                  { text: '> System ready.', delay: 2.0, color: '#39FF14' },
+                ].map((line, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: line.delay, duration: 0.3 }}
+                    className="mb-1"
+                    style={{ color: line.color }}
+                  >
+                    {line.text}
+                  </motion.div>
+                ))}
+              </div>
+              {/* Progress bar */}
+              <div className="mt-3 relative w-full h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(68,138,255,0.1)' }}>
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 2, delay: 0.5, ease: 'easeInOut' }}
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{ background: 'linear-gradient(90deg, #448AFF, #39FF14)', boxShadow: '0 0 12px rgba(57,255,20,0.4)' }}
+                />
+              </div>
+            </div>
+
+            {/* Corner brackets */}
             {[
-              { t: '10px', l: '10px', bw: '2px 0 0 2px' },
-              { t: '10px', r: '10px', bw: '2px 2px 0 0' },
-              { b: '10px', l: '10px', bw: '0 0 2px 2px' },
-              { b: '10px', r: '10px', bw: '0 2px 2px 0' },
+              { top: '16px', left: '16px', borderWidth: '2px 0 0 2px' },
+              { top: '16px', right: '16px', borderWidth: '2px 2px 0 0' },
+              { bottom: '16px', left: '16px', borderWidth: '0 0 2px 2px' },
+              { bottom: '16px', right: '16px', borderWidth: '0 2px 2px 0' },
             ].map((pos, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.3 }}
-                transition={{ delay: 0.8 + i * 0.1, duration: 0.5 }}
-                className="absolute w-8 h-8 z-[2]"
-                style={{ top: pos.t, bottom: pos.b, left: pos.l, right: pos.r, borderWidth: pos.bw, borderStyle: 'solid', borderColor: 'var(--gold-primary)' }}
+                animate={{ opacity: 0.4 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className="absolute w-10 h-10 z-[2]"
+                style={{ ...pos, borderStyle: 'solid', borderColor: '#448AFF' }}
               />
             ))}
-
-
-
-            {/* ── Inline keyframe for scanline drift ── */}
-            <style>{`
-              @keyframes splashScanDrift {
-                0% { background-position: 0 0; }
-                100% { background-position: 0 100vh; }
-              }
-            `}</style>
           </motion.div>
         )}
       </AnimatePresence>
