@@ -4,10 +4,10 @@
       <stop offset="0%" stop-color="#0C0C14"/>
       <stop offset="100%" stop-color="#06060C"/>
     </radialGradient>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F5D76E"/>
-      <stop offset="50%" stop-color="#D4AF37"/>
-      <stop offset="100%" stop-color="#8B6914"/>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#82B1FF"/>
+      <stop offset="50%" stop-color="#448AFF"/>
+      <stop offset="100%" stop-color="#1A47B3"/>
     </linearGradient>
     <filter id="glow">
       <feGaussianBlur stdDeviation="4" result="blur"/>
@@ -22,48 +22,48 @@
 
   <!-- Outer hexagon -->
   <polygon points="256,30 452,143 452,369 256,482 60,369 60,143"
-           fill="none" stroke="#D4AF37" stroke-width="3" opacity="0.25"/>
+           fill="none" stroke="#448AFF" stroke-width="3" opacity="0.25"/>
 
   <!-- Inner hexagon -->
   <polygon points="256,65 430,165 430,365 256,465 82,365 82,165"
-           fill="rgba(212,175,55,0.04)" stroke="#D4AF37" stroke-width="4" opacity="0.7"
+           fill="rgba(68,138,255,0.04)" stroke="#448AFF" stroke-width="4" opacity="0.7"
            filter="url(#glow)"/>
 
   <!-- Node dots -->
-  <circle cx="256" cy="65" r="8" fill="#D4AF37" opacity="0.7"/>
-  <circle cx="430" cy="165" r="8" fill="#D4AF37" opacity="0.7"/>
-  <circle cx="430" cy="365" r="8" fill="#D4AF37" opacity="0.7"/>
-  <circle cx="256" cy="465" r="8" fill="#D4AF37" opacity="0.7"/>
-  <circle cx="82" cy="365" r="8" fill="#D4AF37" opacity="0.7"/>
-  <circle cx="82" cy="165" r="8" fill="#D4AF37" opacity="0.7"/>
+  <circle cx="256" cy="65" r="8" fill="#448AFF" opacity="0.7"/>
+  <circle cx="430" cy="165" r="8" fill="#448AFF" opacity="0.7"/>
+  <circle cx="430" cy="365" r="8" fill="#448AFF" opacity="0.7"/>
+  <circle cx="256" cy="465" r="8" fill="#448AFF" opacity="0.7"/>
+  <circle cx="82" cy="365" r="8" fill="#448AFF" opacity="0.7"/>
+  <circle cx="82" cy="165" r="8" fill="#448AFF" opacity="0.7"/>
 
   <!-- Network lines -->
-  <line x1="256" y1="265" x2="256" y2="65" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
-  <line x1="256" y1="265" x2="430" y2="165" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
-  <line x1="256" y1="265" x2="430" y2="365" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
-  <line x1="256" y1="265" x2="256" y2="465" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
-  <line x1="256" y1="265" x2="82" y2="365" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
-  <line x1="256" y1="265" x2="82" y2="165" stroke="#D4AF37" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="256" y2="65" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="430" y2="165" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="430" y2="365" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="256" y2="465" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="82" y2="365" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
+  <line x1="256" y1="265" x2="82" y2="165" stroke="#448AFF" stroke-width="1" opacity="0.12"/>
 
   <!-- Shield -->
   <path d="M256,130 L340,175 L340,270 Q340,330 256,370 Q172,330 172,270 L172,175 Z"
-        fill="rgba(212,175,55,0.06)" stroke="url(#goldGrad)" stroke-width="5"
+        fill="rgba(68,138,255,0.06)" stroke="url(#blueGrad)" stroke-width="5"
         filter="url(#glow)"/>
 
   <!-- Lock body -->
   <rect x="214" y="240" width="84" height="68" rx="8"
-        fill="rgba(0,229,255,0.12)" stroke="#00E5FF" stroke-width="4"/>
+        fill="rgba(57,255,20,0.12)" stroke="#39FF14" stroke-width="4"/>
 
   <!-- Lock shackle -->
   <path d="M228,240 L228,215 Q228,185 256,185 Q284,185 284,215 L284,240"
-        fill="none" stroke="#00E5FF" stroke-width="4" stroke-linecap="round"/>
+        fill="none" stroke="#39FF14" stroke-width="4" stroke-linecap="round"/>
 
   <!-- Keyhole -->
-  <circle cx="256" cy="268" r="10" fill="#00E5FF" opacity="0.8"/>
-  <rect x="253" y="268" width="6" height="22" rx="2" fill="#00E5FF" opacity="0.8"/>
+  <circle cx="256" cy="268" r="10" fill="#39FF14" opacity="0.8"/>
+  <rect x="253" y="268" width="6" height="22" rx="2" fill="#39FF14" opacity="0.8"/>
 
   <!-- Corner accents -->
-  <g stroke="#D4AF37" stroke-width="2.5" opacity="0.2" fill="none">
+  <g stroke="#448AFF" stroke-width="2.5" opacity="0.2" fill="none">
     <path d="M30 70 L70 70 M30 70 L30 110"/>
     <path d="M482 70 L442 70 M482 70 L482 110"/>
     <path d="M30 442 L70 442 M30 442 L30 402"/>

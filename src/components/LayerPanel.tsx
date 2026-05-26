@@ -19,9 +19,9 @@ const LAYER_GROUPS = [
   {
     label: 'AVIATION',
     icon: Plane,
-    color: '#00E5FF',
+    color: '#39FF14',
     layers: [
-      { key: 'flights', label: 'Commercial', icon: Plane, color: '#00E5FF', dataKey: 'commercial_flights' },
+      { key: 'flights', label: 'Commercial', icon: Plane, color: '#39FF14', dataKey: 'commercial_flights' },
       { key: 'private', label: 'Private', icon: Plane, color: '#00E676', dataKey: 'private_flights' },
       { key: 'jets', label: 'Private Jets', icon: Plane, color: '#FF69B4', dataKey: 'private_jets' },
       { key: 'military', label: 'Military', icon: Shield, color: '#FF3D3D', dataKey: 'military_flights' },
@@ -33,7 +33,7 @@ const LAYER_GROUPS = [
     color: '#00BCD4',
     layers: [
       { key: 'maritime', label: 'Maritime / Naval', icon: Ship, color: '#00BCD4', dataKey: 'maritime_ships,maritime_ports,maritime_chokepoints' },
-      { key: 'satellites', label: 'Satellites', icon: Satellite, color: '#D4AF37', dataKey: 'satellites' },
+      { key: 'satellites', label: 'Satellites', icon: Satellite, color: '#448AFF', dataKey: 'satellites' },
     ],
   },
   {

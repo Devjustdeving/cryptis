@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 const TABS = [
-  { id: 'scanner', label: 'PORT SCAN', icon: Radar, placeholder: 'IP or hostname', color: '#00E5FF' },
+  { id: 'scanner', label: 'PORT SCAN', icon: Radar, placeholder: 'IP or hostname', color: '#39FF14' },
   { id: 'vuln', label: 'VULN SWEEP', icon: Bug, placeholder: 'IP or hostname', color: '#FF3D3D' },
 
   { id: 'dns', label: 'DNS', icon: Server, placeholder: 'Domain name', color: '#448AFF' },
@@ -182,8 +182,8 @@ function OsintPanelInner({ isMobile, onSweepVisualize, onScanGeolocate }: OsintP
       const host = r.host || r.target || query;
       return (
         <div>
-          <SectionHeader title="HOST INFO" icon={Server} color="#00E5FF" />
-          <ResultRow label="Target" value={host} color="#00E5FF" />
+          <SectionHeader title="HOST INFO" icon={Server} color="#39FF14" />
+          <ResultRow label="Target" value={host} color="#39FF14" />
           <ResultRow label="Scan Type" value={r.scan_type || scanType} />
           <ResultRow label="Duration" value={r.duration || r.scan_time} />
           {Array.isArray(ports) && ports.length > 0 && (

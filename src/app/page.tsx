@@ -425,7 +425,7 @@ export default function Dashboard() {
           >
             {/* ── Scanline CRT overlay ── */}
             <div className="absolute inset-0 pointer-events-none z-[1]" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212,175,55,0.015) 2px, rgba(212,175,55,0.015) 4px)',
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(68,138,255,0.015) 2px, rgba(68,138,255,0.015) 4px)',
               animation: 'splashScanDrift 8s linear infinite',
             }} />
 
@@ -448,7 +448,7 @@ export default function Dashboard() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="relative w-40 h-40 mb-8 flex items-center justify-center z-[2]"
             >
-              <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-36 h-36 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
+              <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-36 h-36 drop-shadow-[0_0_20px_rgba(68,138,255,0.3)]" />
             </motion.div>
 
             {/* ── CRYPTIS title — letter-by-letter stagger ── */}
@@ -460,7 +460,7 @@ export default function Dashboard() {
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ delay: 0.5 + i * 0.08, duration: 0.5, ease: 'easeOut' }}
                   className="text-4xl md:text-5xl font-bold tracking-[0.5em] font-mono"
-                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(212,175,55,0.2)' }}
+                  style={{ color: 'var(--text-heading)', textShadow: '0 0 30px rgba(68,138,255,0.2)' }}
                 >
                   {letter}
                 </motion.span>
@@ -484,13 +484,13 @@ export default function Dashboard() {
             {/* ── Multi-stage progress bar ── */}
             <div className="w-64 md:w-80 z-[2]">
               {/* Thin progress track */}
-              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(212,175,55,0.1)' }}>
+              <div className="relative w-full h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(68,138,255,0.1)' }}>
                 <motion.div
                   initial={{ width: '0%' }}
                   animate={{ width: ['0%', '25%', '50%', '78%', '100%'] }}
                   transition={{ duration: 2.2, delay: 0.5, times: [0, 0.25, 0.5, 0.75, 1], ease: 'easeInOut' }}
                   className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(212,175,55,0.4)' }}
+                  style={{ background: 'linear-gradient(90deg, var(--gold-primary), var(--cyan-primary), var(--gold-primary))', boxShadow: '0 0 12px rgba(68,138,255,0.4)' }}
                 />
               </div>
 
@@ -519,7 +519,7 @@ export default function Dashboard() {
             {/* ── Decorative grid lines ── */}
             <div className="absolute inset-0 pointer-events-none z-[0]" style={{ opacity: 0.03 }}>
               <div className="absolute inset-0" style={{
-                backgroundImage: 'linear-gradient(rgba(212,175,55,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.5) 1px, transparent 1px)',
+                backgroundImage: 'linear-gradient(rgba(68,138,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(68,138,255,0.5) 1px, transparent 1px)',
                 backgroundSize: '60px 60px',
               }} />
             </div>
@@ -615,7 +615,7 @@ export default function Dashboard() {
       {/* ── HEADER ── */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 2.5 }} className={`absolute top-3 left-3 md:top-5 md:left-5 z-[200] pointer-events-none flex items-center gap-2 md:gap-3`}>
         <div className="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center relative">
-          <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-full h-full drop-shadow-[0_0_8px_rgba(212,175,55,0.3)]" />
+          <img src="/cryptis-logo.svg" alt="CRYPTIS" className="w-full h-full drop-shadow-[0_0_8px_rgba(68,138,255,0.3)]" />
         </div>
         {/* Horizontal rule extending from logo */}
         <div className="hidden md:block absolute top-1/2 left-[52px] w-[200px] h-[1px] bg-gradient-to-r from-[var(--gold-primary)]/40 via-[var(--gold-primary)]/15 to-transparent" />
@@ -876,7 +876,7 @@ export default function Dashboard() {
       {/* ── BOTTOM CENTER (desktop) ── */}
       {!isMobile && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 3, duration: 0.8 }} className="desktop-only absolute bottom-5 left-1/2 -translate-x-1/2 z-[200] pointer-events-auto">
-          <div className="glass-panel px-5 py-2.5 flex items-center gap-0 cryptis-glow relative overflow-hidden" style={{ borderImage: 'linear-gradient(90deg, rgba(212,175,55,0.05), rgba(212,175,55,0.2), rgba(212,175,55,0.05)) 1', borderImageSlice: 1, borderWidth: '1px', borderStyle: 'solid' }}>
+          <div className="glass-panel px-5 py-2.5 flex items-center gap-0 cryptis-glow relative overflow-hidden" style={{ borderImage: 'linear-gradient(90deg, rgba(68,138,255,0.05), rgba(68,138,255,0.2), rgba(68,138,255,0.05)) 1', borderImageSlice: 1, borderWidth: '1px', borderStyle: 'solid' }}>
 
             {/* Animated scan line sweeping across the bar */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
