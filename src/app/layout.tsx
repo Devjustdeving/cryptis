@@ -3,7 +3,7 @@ import "./globals.css";
 
 const SITE_URL = "https://cryptis.vercel.app";
 const SITE_NAME = "CRYPTIS";
-const SITE_TITLE = "CRYPTIS — Open Source Intelligence Platform | Live Flight Tracking, CCTV, OSINT Tools & More";
+const SITE_TITLE = "CRYPTIS — Open Source Intelligence Platform | Live Flights, CCTV, OSINT Tools & More";
 const SITE_DESCRIPTION = "CRYPTIS — The open-source intelligence platform. Track 10,000+ aircraft, 2,000 satellites, and worldwide CCTV cameras in real-time on a 3D globe. Run Nmap scans, DNS lookups, WHOIS queries, SSL cert analysis & threat intelligence — all from your browser. 20+ live data feeds including earthquakes, wildfires, nuclear facilities, cyber threats, and global conflicts. Free & open source.";
 
 export const viewport: Viewport = {
